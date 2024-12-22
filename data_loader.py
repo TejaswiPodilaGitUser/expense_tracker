@@ -20,7 +20,15 @@ def load_data():
         
         # Combine all monthly data into a single DataFrame
         if dataframes:
-            return pd.concat(dataframes, ignore_index=True)
+            combined_df = pd.concat(dataframes, ignore_index=True)
+            return combined_df
         else:
             return None
+    return None
+
+def get_top_expenses(df, top_n=10):
+    """Returns the top N expenses from the combined data."""
+    if df is not None and not df.empty:
+        top_expenses = df.sort_values(by='amount_paid', ascending=False).head(top_n)
+        return top_expenses
     return None
