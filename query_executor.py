@@ -2,12 +2,13 @@ import streamlit as st
 import pandas as pd
 from db_connection import MySQLDatabase
 
-def custom_query_executor():
-    """Allows users to execute custom SQL queries."""
+def custom_query_executor(selected_month):
+    """Allows users to execute custom SQL queries with a default month parameter."""
     st.subheader('🔍 Execute Custom SQL Query')
     
-    # Text area for input
-    query = st.text_area("Enter your SQL query below:", "SELECT * FROM expenses_month_1 LIMIT 5")
+    # Default query using selected_month
+    default_query = f"SELECT * FROM expenses_month_{selected_month} LIMIT 5"
+    query = st.text_area("Provide Your Custom SQL Query:", default_query)
     
     # Button to execute query
     if st.button('Execute Query'):

@@ -23,15 +23,12 @@ if df is not None and not df.empty:
     # Section 1: Yearly Chart Type (Right side)
     # ------------------------
     col1, spacer, col2 = st.columns([2, 0.2, 2])
-
+    with col1:  
+        st.subheader("📅 Annual Spending Insights")
+        
     with col2:
         # Yearly Chart Type Selection (Pie/Bar)
-        chart_type = st.selectbox(
-            "Choose Yearly Chart Type:",
-            ["Pie Chart", "Bar Chart"],
-            index=0,
-            key="yearly_chart_type"
-        )
+        chart_type = chart_selector("Select Yearly Data Chart Type:", "yearly_chart_type", "Pie Chart")
         st.session_state.chart_type = chart_type
 
     # ------------------------
@@ -42,7 +39,7 @@ if df is not None and not df.empty:
     with col1:
         top_expenses = get_top_expenses(df)
         if top_expenses is not None:
-            st.subheader("Top 10 Expenditures for the Year:")
+            st.subheader("💰 Yearly Top 10 Expenditures:")
             st.write(top_expenses)
         else:
             st.write("❌ No valid data found.")
@@ -54,30 +51,25 @@ if df is not None and not df.empty:
             bar_chart_fig = plot_yearly_spending_bar_chart(df)
           
         elif chart_type == "Pie Chart":
-            st.subheader("Top 10 Spending Categories for the Year:")
+            st.subheader("🗂️ Annual Top 10 Spending Categories:")
             fig = plot_top_10_category_pie_chart(df)
 
     # ------------------------
     # Section 3: Month Selection & Monthly Chart Type
     # ------------------------
-    st.subheader("📅 Monthly Data Selection")
+    st.subheader("📅 Monthly Data Visualization")
     col1, spacer, col2 = st.columns([2, 0.2, 2])
 
     with col1:
         selected_month = month_selector()
     
     with col2: 
-        monthly_chart_type = st.selectbox(
-            "Choose Monthly Chart Type:",
-            ["Pie Chart", "Bar Chart"],
-            index=0,
-            key="monthly_chart_type"
-        )
+        monthly_chart_type = chart_selector("Select Monthly Chart Type:", "monthly_chart_type", "Bar Chart")
 
     # ------------------------
     # Section 4: Monthly Data Visualization
     # ------------------------
-    #st.subheader("📊 Monthly Data Visualization")
+    #st.subheader("📊 Monthly Spending Insights")
     col1, spacer, col2 = st.columns([2, 0.2, 2])
 
     monthly_data = df[df['month'] == selected_month]
@@ -91,7 +83,7 @@ if df is not None and not df.empty:
     # ------------------------
     # Section 5: Execute Custom SQL Query
     # ------------------------
-    custom_query_executor()
+    custom_query_executor(selected_month)
 
     # ------------------------
     # Section 6: Expense Management (Update/Delete)

@@ -48,7 +48,7 @@ def plot_yearly_spending_bar_chart(df, amount_column='amount_paid'):
     max_spending_amount = total_spending_per_month.max()
     month_names = DateUtils.get_month_names()
     max_spending_month_name = month_names[max_spending_month]
-    st.write(f"Max Spending Month: {max_spending_month_name} with ${max_spending_amount:.2f}")
+    st.write(f"🏅 Max Spending Month: {max_spending_month_name} with ${max_spending_amount:.2f}")
 
     return fig
 
@@ -81,7 +81,10 @@ def plot_top_10_category_pie_chart(df, category_column='category', amount_column
     # Add data insights
     top_category = category_spending.idxmax()
     top_category_amount = category_spending.max()
-    st.write(f"Top Spending Category: {top_category} with ${top_category_amount:.2f}")
+    st.write(f"🏅 Top Spending Category: {top_category} (${top_category_amount:.2f})")
+    min_category = category_spending.idxmin()
+    min_category_amount = category_spending.min()
+    st.write(f"⬇️ Lowest Spending Category: {min_category} (${min_category_amount:.2f})")
 
 
     # Display the pie chart
