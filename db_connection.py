@@ -29,7 +29,7 @@ class MySQLDatabase:
                 print("✅ Connected to MySQL Database")
                 return self.conn
         except Error as e:
-            print(f"❌ Error while connecting to MySQL: {e}")
+            print(f"Error: {e}")
             return None
 
     def close(self):
