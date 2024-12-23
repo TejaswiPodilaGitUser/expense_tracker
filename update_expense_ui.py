@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from expense_manager import update_expense
 from db_connection import MySQLDatabase
+from sqlalchemy.exc import SQLAlchemyError
 
 # Function to fetch data for a specific month
 def get_monthly_data(month):
@@ -9,12 +10,21 @@ def get_monthly_data(month):
     conn = db.connect()
     if not conn:
         st.error("❌ Failed to connect to the database.")
-        return pd.DataFrame()
+        return pd.DataFrame(), "connection_error"
     
     query = f"SELECT * FROM expenses_month_{month}"
-    df = pd.read_sql(query, conn)
-    conn.close()
-    return df
+    try:
+        df = pd.read_sql(query, conn)
+    except pd.io.sql.DatabaseError as e:
+        if "1146" in str(e):
+            return pd.DataFrame(), "table_not_exist"
+        else:
+            st.error(f"❌ Error executing query: {e}")
+            return pd.DataFrame(), "query_error"
+    finally:
+        conn.close()
+    
+    return df, None
 
 # UI Component for updating an expense
 def update_expense_ui(selected_month):
@@ -23,8 +33,11 @@ def update_expense_ui(selected_month):
     # Display the selected month
     st.info(f"📅 Selected Month: **{selected_month}**")
     
-    df = get_monthly_data(selected_month)
-    if df.empty:
+    df, error = get_monthly_data(selected_month)
+    if error == "table_not_exist":
+        st.error(f"❌ Table expenses_month_{selected_month} does not exist.")
+        return
+    elif df.empty:
         st.warning("⚠️ No data available for the selected month.")
         return
     

@@ -6,6 +6,10 @@ from utils import DateUtils
 
 def plot_category_spending(monthly_data, chart_type):
     """Visualizes spending by category."""
+    if monthly_data.empty:
+        st.warning("No data available for the selected month.")
+        return
+    
     category_spending = monthly_data.groupby('category')['amount_paid'].sum().sort_values(ascending=False)
     
     # Set a consistent size for both charts
@@ -39,17 +43,23 @@ def plot_category_spending(monthly_data, chart_type):
 
 def plot_monthly_trends(df, selected_month):
     """Displays category-wise spending for the selected month using a line chart."""
-    
     # Filter data for the selected month
     monthly_data = df[df['month'] == selected_month]
+    
+    if monthly_data.empty:
+        st.warning(f"No data available for the selected month: {selected_month}")
+        return
     
     # Section 1: Total Spending for the Selected Month
     total_spending = monthly_data['amount_paid'].sum()
     st.subheader(f"📈 Total Spending for Month {selected_month}: ${total_spending:.2f}")
-
+    
     # Section 2: Spending by Category for the Selected Month
     category_spending = monthly_data.groupby('category')['amount_paid'].sum()
-
+    if category_spending.empty:
+        st.warning("No spending data available for categories in the selected month.")
+        return
+    
     # Display Line Chart for category spending in the selected month
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.plot(category_spending.index, category_spending.values, marker='o', color='royalblue')
@@ -57,18 +67,16 @@ def plot_monthly_trends(df, selected_month):
     ax.set_ylabel('Amount Paid ($)', fontweight='bold')
     ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha="right")
     st.pyplot(fig)
-
+    
     # Section 3: Max and Min Spending Categories for the selected month
     max_category = category_spending.idxmax()
     max_category_spending = category_spending.max()
     min_category = category_spending.idxmin()
     min_category_spending = category_spending.min()
-
-    # Display the insights for the selected month
-
+    
     # Month name mapping
     month_names = DateUtils.get_month_names()
     month_name = month_names[selected_month]
-
+    
     st.write(f"🔺 Highest Expenditure Category in {month_name}: {max_category} (${max_category_spending:.2f})")
     st.write(f"🔻 Lowest Expenditure Category in {month_name}: {min_category} (${min_category_spending:.2f})")

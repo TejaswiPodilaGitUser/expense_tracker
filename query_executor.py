@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from db_connection import MySQLDatabase
+from sqlalchemy.exc import SQLAlchemyError
 
 def custom_query_executor(selected_month):
     """Allows users to execute custom SQL queries with a default month parameter."""
@@ -18,9 +19,19 @@ def custom_query_executor(selected_month):
             try:
                 # Execute the query and store the result in session_state
                 query_result = pd.read_sql(query, conn)
-                st.session_state.query_result = query_result  # Store in session state
+                if query_result.empty:
+                    st.warning("⚠️ No data present in the table.")
+                else:
+                    st.session_state.query_result = query_result  # Store in session state
+            except pd.io.sql.DatabaseError as e:
+                if "1146" in str(e):
+                    st.error("❌ Table does not exist.")
+                else:
+                    st.error(f"❌ Error executing query: {e}")
+            except SQLAlchemyError as e:
+                st.error(f"❌ SQLAlchemy error: {e}")
             except Exception as e:
-                st.error(f"❌ Error executing query: {e}")
+                st.error(f"❌ An unexpected error occurred: {e}")
             finally:
                 db.close()  # Close connection after use
         else:

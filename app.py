@@ -12,7 +12,10 @@ from monthly_data_visualization import plot_category_spending, plot_monthly_tren
 # Streamlit App
 # ---------------------------
 st.set_page_config(layout="wide")
-st.title('📊 Expense Tracker Dashboard')
+
+# Center the title with padding
+st.markdown("<h1 style='text-align: center; padding: 20px;'>📊 Expense Tracker Dashboard</h1>", unsafe_allow_html=True)
+
 
 # Load data
 df = load_data()
@@ -57,7 +60,7 @@ if df is not None and not df.empty:
     # ------------------------
     # Section 3: Month Selection & Monthly Chart Type
     # ------------------------
-    st.subheader("📅 Monthly Data Visualization")
+    st.subheader("📅 Monthly Spending Insights")
     col1, spacer, col2 = st.columns([2, 0.2, 2])
 
     with col1:
@@ -69,7 +72,6 @@ if df is not None and not df.empty:
     # ------------------------
     # Section 4: Monthly Data Visualization
     # ------------------------
-    #st.subheader("📊 Monthly Spending Insights")
     col1, spacer, col2 = st.columns([2, 0.2, 2])
 
     monthly_data = df[df['month'] == selected_month]
